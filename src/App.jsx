@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, memo } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
@@ -16,6 +16,27 @@ import './App.css'
 // Breve biografia (biography)
 
 // Obiettivo: Caricare e mostrare i politici in un’interfaccia chiara e leggibile.
+const PolicitoCard = memo(({ politico }) => {
+  console.log('card');
+
+  return (
+    <div className="card" key={politico.id}>
+      <img src={politico.image} alt={politico.name} />
+      <li >
+        <div className='card-content'>
+          <h2 className='card-title'>{politico.name}</h2>
+          <div className='card-text'>
+            <p><strong>{politico.position}</strong></p>
+            <p>{politico.biography}</p>
+          </div>
+        </div>
+      </li>
+    </div>
+  )
+})
+
+
+
 
 function App() {
 
@@ -30,10 +51,10 @@ function App() {
       .catch(error => console.error(error))
   }, [])
 
-  const filtraggio = () => {
-    return politici.filter((politico) => politico.name.toLowerCase().includes(search.toLocaleLowerCase())) ||
-      politici.filter((politico) => politico.biography.toLowerCase().includes(search.toLocaleLowerCase()))
-  }
+  const politiciFiltrati = politici.filter((politico) =>
+    politico.name.toLowerCase().includes(search.toLocaleLowerCase()) ||
+    politico.biography.toLowerCase().includes(search.toLocaleLowerCase()))
+
 
 
   return (
@@ -47,19 +68,8 @@ function App() {
             value={search}
             onChange={(e) => setSearch(e.target.value)} />
           <ul>
-            {filtraggio().map((politico) => (
-              <div className="card" key={politico.id}>
-                <img src={politico.image} alt={politico.name} />
-                <li >
-                  <div className='card-content'>
-                    <h2 className='card-title'>{politico.name}</h2>
-                    <div className='card-text'>
-                      <p><strong>{politico.position}</strong></p>
-                      <p>{politico.biography}</p>
-                    </div>
-                  </div>
-                </li>
-              </div>
+            {politiciFiltrati.map((politico) => (
+              <PolicitoCard key={politico.id} politico={politico} />
             ))}
           </ul>
         </div>
